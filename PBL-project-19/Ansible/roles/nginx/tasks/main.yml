@@ -1,0 +1,37 @@
+---
+# tasks file for nginx
+- name: install nginx on the webserver
+  ansible.builtin.yum:
+    enablerepo: "BaseOS,AppStream"
+    name: "nginx"
+    state: present
+
+- name: ensure nginx is started and enabled
+  ansible.builtin.service:
+     name: nginx 
+     state: started 
+     enabled: yes
+
+- name: create html directory
+  ansible.builtin.file:
+    path: /var/www/html 
+    state: directory
+    follow: yes
+
+- name: rename the defualt configurarion file
+  ansible.builtin.copy:
+    src: /etc/nginx/nginx.conf 
+    dest: /etc/nginx/nginx.conf-distro
+    mode: '0755'
+    remote_src: yes
+
+- name: create new nginx file
+  ansible.builtin.file: 
+    path: /etc/nginx/nginx.conf 
+    state: touch
+    
+- name: configure nginx config file
+  ansible.builtin.template:
+    src: templates/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf 
+    follow: yes

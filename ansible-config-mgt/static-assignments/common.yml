@@ -1,0 +1,48 @@
+---
+- name: update web, nfs and db servers
+  hosts: webservers, nfs
+  remote_user: ec2-user
+  become: yes
+  become_user: root
+  tasks:
+  - name: ensure wireshark is at the latest version
+    yum:
+      name: wireshark
+      state: latest
+
+
+#------------------------------------
+
+- name: update LB server
+  hosts: lb, db
+  remote_user: ubuntu
+  become: yes
+  become_user: root
+  tasks:
+    - name: Update apt repo
+      apt: 
+        update_cache: yes
+    - name: ensure wireshark is at the latest version
+      apt:
+        name: wireshark
+        state: latest
+
+
+- name: create directory, file and set timezone on all servers
+  hosts: webservers, nfs, db, lb
+  become: yes
+  tasks:
+  
+  - name: create a directory
+    file:
+      path: /home/sample
+      state: directory
+      
+  - name: create a file 
+    file: 
+      path: /home/sample/ansible.txt
+      state: touch
+      
+  - name: set timezone
+    timezone:
+      name: Africa/Lagos 

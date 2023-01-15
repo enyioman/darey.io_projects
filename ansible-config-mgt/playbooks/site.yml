@@ -1,0 +1,44 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+- name:  dynamic variables 
+  import_playbook: ../static-assignments/common.yml 
+  include: ../dynamic-assignments/env-vars.yml
+  tags:
+  - always
+
+- hosts: webservers
+- name: Webserver assignment
+  import_playbook: ../static-assignments/uat-webservers.yml
+
+- hosts: all
+- name: this contains dynamic variables
+  import_playbook: ../dynamic-assignments/env-vars.yml
+ 
+- name: include env files
+  import_playbook: ../static-assignments/common.yml
+  tags:
+    - always
+
+# - hosts: webservers
+# - name: Webserver assignment
+#   import_playbook: ../static-assignments/webservers.yml
+
+- hosts: uat-webservers
+- import_playbook: ../static-assignments/uat-webservers.yml
+
+- hosts: db
+  become: yes
+  become_method: sudo
+- name: import database file
+  import_playbook: ../static-assignments/db.yml
+  tags:
+    - always
+
+- hosts: lb
+- name: Loadbalancers assignment
+  import_playbook: ../static-assignments/loadbalancers.yml
+  when: load_balancer_is_required 
+
+

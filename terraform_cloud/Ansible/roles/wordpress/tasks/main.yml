@@ -1,0 +1,75 @@
+---
+- name: mounting share(s)
+  mount:
+    path: /var/www
+    src: fs-06a94046bc85a62be:/
+    fstype: efs
+    opts: nosuid,noexec,defaults,tls,accesspoint=fsap-08f4c19f3f712ee7d
+    state: mounted
+
+- name: install httpd on the webserver
+  ansible.builtin.yum:
+    enablerepo: "BaseOS,AppStream"
+    name: "httpd"
+    state: present
+
+- name: install PHP
+  ansible.builtin.yum:
+    name:
+      - php 
+      - php-mysqlnd
+      - php-gd 
+      - php-curl
+      - php-common
+      - php-fpm
+      - php-mbstring
+      - php-opcache 
+      - php-xml
+      - php-intl 
+      - php-json
+    state: present
+
+- name: ensure php-fpm is started and enabled
+  ansible.builtin.service:
+     name: php-fpm
+     state: reloaded
+     enabled: yes
+  notify: Restart httpd
+
+- import_tasks: setup-site.yml
+# tasks file for webserver
+- name: install httpd on the webserver
+  ansible.builtin.yum:
+    enablerepo: "BaseOS,AppStream"
+    name: "httpd"
+    state: present
+
+- name: install mod_ssl on the webserver
+  ansible.builtin.yum:
+    name: "mod_ssl"
+    state: present 
+
+- name: install PHP
+  ansible.builtin.yum:
+    name:
+      - php 
+      - php-mysqlnd
+      - php-gd 
+      - php-curl
+      - php-common
+      - php-fpm
+      - php-mbstring
+      - php-opcache 
+      - php-xml
+      - php-intl 
+      - php-json
+    state: present
+
+- name: ensure php-fpm is started and enabled
+  ansible.builtin.service:
+     name: php-fpm
+     state: reloaded
+     enabled: yes
+  notify: Restart httpd
+
+- import_tasks: setup-db.yml

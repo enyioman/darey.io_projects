@@ -1,0 +1,4 @@
+- hosts: lb
+  roles:
+    - { role: ../roles/nginx, when: enable_nginx_lb and load_balancer_is_required }
+    - { role: ../roles/apache, when: enable_apache_lb and load_balancer_is_required }

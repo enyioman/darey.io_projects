@@ -1,0 +1,9 @@
+[db]
+172.31.85.250 ansible_ssh_user='ubuntu' 
+
+[lb]
+172.31.26.7 ansible_ssh_user='ubuntu'
+
+[artifactory]
+172.31.31.122 ansible_ssh_user='ubuntu'
+
